@@ -1,81 +1,22 @@
 using Microsoft.AspNetCore.Mvc;
 using PgrStudentManagement.Web.Models;
+using PgrStudentManagement.Web.Services;
 
 namespace PgrStudentManagement.Web.Controllers;
 
 public class StudentsController : Controller
 {
-    public static List<Student> Students { get; } = new ()
-    {
-        new Student
-        {
-            StudentNumber = "S100001",
-            FirstName = "John",
-            LastName = "Doe",
-            Course = "PhD Computing",
-            ModeOfStudy = "Full-time",
-            StartDate = new DateTime(2025, 10, 1),
-            Status = Status.Researching,
-            ThesisTitle = "Explainable Models for Clinical Decision Support",
-            ExpectedSubmissionDate = new DateTime(2028, 9, 30),
-            OriginalExpectedSubmissionDate = new DateTime(2028, 9, 30),
-            ActualSubmissionDate = null
-        },
-        new Student
-        {
-            StudentNumber = "S100002",
-            FirstName = "Jane",
-            LastName = "Smith",
-            Course = "Professional Doctorate",
-            ModeOfStudy = "Part-time",
-            StartDate = new DateTime(2024, 10, 1),
-            Status = Status.WritingUp,
-            ThesisTitle = null,
-            ExpectedSubmissionDate = null,
-            OriginalExpectedSubmissionDate = null,
-            ActualSubmissionDate = null
-        }
-    };
+    private readonly StudentService _studentService;
 
-    public static void ResetDefaultStudents()
+    public StudentsController(StudentService studentService)
     {
-        Students.Clear();
-        Students.AddRange(new List<Student>
-        {
-            new Student
-            {
-                StudentNumber = "S100001",
-                FirstName = "John",
-                LastName = "Doe",
-                Course = "PhD Computing",
-                ModeOfStudy = "Full-time",
-                StartDate = new DateTime(2025, 10, 1),
-                Status = Status.Researching,
-                ThesisTitle = "Explainable Models for Clinical Decision Support",
-                ExpectedSubmissionDate = new DateTime(2028, 9, 30),
-                OriginalExpectedSubmissionDate = new DateTime(2028, 9, 30),
-                ActualSubmissionDate = null
-            },
-            new Student
-            {
-                StudentNumber = "S100002",
-                FirstName = "Jane",
-                LastName = "Smith",
-                Course = "Professional Doctorate",
-                ModeOfStudy = "Part-time",
-                StartDate = new DateTime(2024, 10, 1),
-                Status = Status.WritingUp,
-                ThesisTitle = null,
-                ExpectedSubmissionDate = null,
-                OriginalExpectedSubmissionDate = null,
-                ActualSubmissionDate = null
-            }
-        });
+        _studentService = studentService;
     }
-
+    
     public IActionResult Index()
     {
-        return View(Students);
+        var students = _studentService.GetStudents();
+        return View(students);
     }
 
     // W2-UC01: View Enrolment Details
@@ -87,8 +28,7 @@ public class StudentsController : Controller
             return View("StudentNotFound");
         }
 
-        var student = Students.FirstOrDefault(s =>
-            s.StudentNumber.Equals(studentNumber.Trim(), StringComparison.OrdinalIgnoreCase));
+        var student = _studentService.GetStudent(studentNumber);
 
         if (student == null)
         {
@@ -108,8 +48,7 @@ public class StudentsController : Controller
             return View("StudentNotFound");
         }
 
-        var student = Students.FirstOrDefault(s =>
-            s.StudentNumber.Equals(studentNumber.Trim(), StringComparison.OrdinalIgnoreCase));
+        var student = _studentService.GetStudent(studentNumber);
 
         if (student == null)
         {
@@ -130,8 +69,7 @@ public class StudentsController : Controller
             return View("StudentNotFound");
         }
 
-        var student = Students.FirstOrDefault(s =>
-            s.StudentNumber.Equals(studentNumber.Trim(), StringComparison.OrdinalIgnoreCase));
+        var student = _studentService.GetStudent(studentNumber);
 
         if (student == null)
         {
@@ -141,6 +79,74 @@ public class StudentsController : Controller
 
         return View(student);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// W? -UC? create student post
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult CreateStudent(Student student)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(student);
+        }
+        var createdStudent = _studentService.CreateStudent(
+        student.StudentNumber,
+        student.FirstName,
+        student.LastName,
+        student.Status,
+        student.Course,
+        student.ModeOfStudy,
+        student.StartDate,
+        student.ThesisTitle);
+
+        if (createdStudent is null)
+        {
+            ModelState.AddModelError(string.Empty, "Failed to create student. Student number may already exist.");
+                return View(student);
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // W2-UC03: Update Student Status (POST)
     [HttpPost]
@@ -153,8 +159,7 @@ public class StudentsController : Controller
             return View("StudentNotFound");
         }
 
-        var student = Students.FirstOrDefault(s =>
-            s.StudentNumber.Equals(studentNumber.Trim(), StringComparison.OrdinalIgnoreCase));
+        var student = _studentService.GetStudent(studentNumber);
 
         if (student == null)
         {
@@ -184,8 +189,7 @@ public class StudentsController : Controller
             return View("StudentNotFound");
         }
 
-        var student = Students.FirstOrDefault(s =>
-            s.StudentNumber.Equals(studentNumber.Trim(), StringComparison.OrdinalIgnoreCase));
+        var student = _studentService.GetStudent(studentNumber);
 
         if (student == null)
         {
@@ -207,8 +211,7 @@ public class StudentsController : Controller
             return View("StudentNotFound");
         }
 
-        var student = Students.FirstOrDefault(s =>
-            s.StudentNumber.Equals(studentNumber.Trim(), StringComparison.OrdinalIgnoreCase));
+        var student = _studentService.GetStudent(studentNumber);
 
         if (student == null)
         {
@@ -244,8 +247,7 @@ public class StudentsController : Controller
             return View("StudentNotFound");
         }
 
-        var student = Students.FirstOrDefault(s =>
-            s.StudentNumber.Equals(studentNumber.Trim(), StringComparison.OrdinalIgnoreCase));
+        var student = _studentService.GetStudent(studentNumber);
 
         if (student == null)
         {
@@ -267,8 +269,7 @@ public class StudentsController : Controller
             return View("StudentNotFound");
         }
 
-        var student = Students.FirstOrDefault(s =>
-            s.StudentNumber.Equals(studentNumber.Trim(), StringComparison.OrdinalIgnoreCase));
+        var student = _studentService.GetStudent(studentNumber);
 
         if (student == null)
         {

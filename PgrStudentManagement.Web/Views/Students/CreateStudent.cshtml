@@ -1,0 +1,104 @@
+@model PgrStudentManagement.Web.Models.Student
+
+@{
+    ViewData["Title"] = "Create Student";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h1 class="h2 mb-1">Create Student</h1>
+            <p class="text-muted mb-0">Fill in all required details to register a new PGR student.</p>
+        </div>
+        <div>
+            <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Back to List</a>
+        </div>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" role="alert">
+            <div asp-validation-summary="All" class="text-danger mb-0"></div>
+        </div>
+    }
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form asp-action="CreateStudent" method="post">
+                <div class="row">
+                    <!-- Student Number -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="StudentNumber" class="form-label fw-bold">Student Number</label>
+                        <input asp-for="StudentNumber" class="form-control" placeholder="e.g. S12345678" />
+                        <span asp-validation-for="StudentNumber" class="text-danger"></span>
+                    </div>
+
+                    <!-- Course -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Course" class="form-label fw-bold">Course</label>
+                        <input asp-for="Course" class="form-control" placeholder="e.g. PhD Computer Science" />
+                        <span asp-validation-for="Course" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- First Name -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="FirstName" class="form-label fw-bold">First Name</label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="LastName" class="form-label fw-bold">Last Name</label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Mode of Study -->
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="ModeOfStudy" class="form-label fw-bold">Mode of Study</label>
+                        <select asp-for="ModeOfStudy" class="form-select">
+                            <option value="">-- Select Mode --</option>
+                            <option value="Full-Time">Full-Time</option>
+                            <option value="Part-Time">Part-Time</option>
+                        </select>
+                        <span asp-validation-for="ModeOfStudy" class="text-danger"></span>
+                    </div>
+
+                    <!-- Start Date -->
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="StartDate" class="form-label fw-bold">Start Date</label>
+                        <input asp-for="StartDate" type="date" class="form-control" />
+                        <span asp-validation-for="StartDate" class="text-danger"></span>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="Status" class="form-label fw-bold">Status</label>
+                        <select asp-for="Status" asp-items="Html.GetEnumSelectList<PgrStudentManagement.Web.Models.Status>()" class="form-select">
+                            <option value="">-- Select Status --</option>
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Thesis Title -->
+                <div class="mb-4">
+                    <label asp-for="ThesisTitle" class="form-label fw-bold">Thesis Title</label>
+                    <textarea asp-for="ThesisTitle" class="form-control" rows="3" placeholder="Enter thesis title if available..."></textarea>
+                    <span asp-validation-for="ThesisTitle" class="text-danger"></span>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Create Student</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
