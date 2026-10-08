@@ -87,7 +87,10 @@ public class StudentsController : Controller
 
 
 
-
+    public IActionResult CreateStudent()
+    {
+        return View();
+    }
 
 
 
