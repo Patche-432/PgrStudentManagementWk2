@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using PgrStudentManagement.Web.Models;
-using PgrStudentManagement.Web.Services;
+using PgrStudentManagement.Web.Modules.Students.Models;
+using PgrStudentManagement.Web.Modules.Students.Services;
 
-namespace PgrStudentManagement.Web.Controllers;
+namespace PgrStudentManagement.Web.Modules.Students.Controllers;
 
 public class StudentsController : Controller
 {

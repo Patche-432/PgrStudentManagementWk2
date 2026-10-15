@@ -1,4 +1,4 @@
-@model PgrStudentManagement.Web.Models.Student
+@model PgrStudentManagement.Web.Modules.Students.Models.Student
 
 @{
     ViewData["Title"] = "Update Student Status";
@@ -36,13 +36,13 @@
                     <label class="form-label text-muted">Current Status</label>
                     <div>
                         <span class="badge @(Model.Status switch {
-                            PgrStudentManagement.Web.Models.Status.Researching => "bg-primary",
-                            PgrStudentManagement.Web.Models.Status.WritingUp => "bg-info text-dark",
-                            PgrStudentManagement.Web.Models.Status.Submitted => "bg-success",
-                            PgrStudentManagement.Web.Models.Status.Corrections => "bg-warning text-dark",
-                            PgrStudentManagement.Web.Models.Status.Completed => "bg-dark",
-                            PgrStudentManagement.Web.Models.Status.Suspended => "bg-secondary",
-                            PgrStudentManagement.Web.Models.Status.Withdrawn => "bg-danger",
+                            PgrStudentManagement.Web.Modules.Students.Models.Status.Researching => "bg-primary",
+                            PgrStudentManagement.Web.Modules.Students.Models.Status.WritingUp => "bg-info text-dark",
+                            PgrStudentManagement.Web.Modules.Students.Models.Status.Submitted => "bg-success",
+                            PgrStudentManagement.Web.Modules.Students.Models.Status.Corrections => "bg-warning text-dark",
+                            PgrStudentManagement.Web.Modules.Students.Models.Status.Completed => "bg-dark",
+                            PgrStudentManagement.Web.Modules.Students.Models.Status.Suspended => "bg-secondary",
+                            PgrStudentManagement.Web.Modules.Students.Models.Status.Withdrawn => "bg-danger",
                             _ => "bg-light text-dark"
                         }) fs-6">
                             @Model.Status
@@ -52,7 +52,7 @@
 
                 <div class="mb-4">
                     <label for="status" class="form-label fw-bold">Select New Status</label>
-                    <select id="status" name="status" class="form-select" asp-items="Html.GetEnumSelectList<PgrStudentManagement.Web.Models.Status>()" asp-for="Status">
+                    <select id="status" name="status" class="form-select" asp-items="Html.GetEnumSelectList<PgrStudentManagement.Web.Modules.Students.Models.Status>()" asp-for="Status">
                     </select>
                 </div>
 

@@ -1,7 +1,7 @@
-using PgrStudentManagement.Web.Data;
-using PgrStudentManagement.Web.Models;
+using PgrStudentManagement.Web.Modules.Students.Data;
+using PgrStudentManagement.Web.Modules.Students.Models;
 
-namespace PgrStudentManagement.Web.Services;
+namespace PgrStudentManagement.Web.Modules.Students.Services;
 
 public class StudentService
 {

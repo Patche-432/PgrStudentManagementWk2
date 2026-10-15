@@ -1,4 +1,4 @@
-@model IEnumerable<PgrStudentManagement.Web.Models.Student>
+@model IEnumerable<PgrStudentManagement.Web.Modules.Students.Models.Student>
 
 @{
     ViewData["Title"] = "Students";
@@ -46,13 +46,13 @@
                                 <td>@(student.Course ?? "N/A")</td>
                                 <td>
                                     <span class="badge @(student.Status switch {
-                                        PgrStudentManagement.Web.Models.Status.Researching => "bg-primary",
-                                        PgrStudentManagement.Web.Models.Status.WritingUp => "bg-info text-dark",
-                                        PgrStudentManagement.Web.Models.Status.Submitted => "bg-success",
-                                        PgrStudentManagement.Web.Models.Status.Corrections => "bg-warning text-dark",
-                                        PgrStudentManagement.Web.Models.Status.Completed => "bg-dark",
-                                        PgrStudentManagement.Web.Models.Status.Suspended => "bg-secondary",
-                                        PgrStudentManagement.Web.Models.Status.Withdrawn => "bg-danger",
+                                        PgrStudentManagement.Web.Modules.Students.Models.Status.Researching => "bg-primary",
+                                        PgrStudentManagement.Web.Modules.Students.Models.Status.WritingUp => "bg-info text-dark",
+                                        PgrStudentManagement.Web.Modules.Students.Models.Status.Submitted => "bg-success",
+                                        PgrStudentManagement.Web.Modules.Students.Models.Status.Corrections => "bg-warning text-dark",
+                                        PgrStudentManagement.Web.Modules.Students.Models.Status.Completed => "bg-dark",
+                                        PgrStudentManagement.Web.Modules.Students.Models.Status.Suspended => "bg-secondary",
+                                        PgrStudentManagement.Web.Modules.Students.Models.Status.Withdrawn => "bg-danger",
                                         _ => "bg-light text-dark"
                                     })">
                                         @student.Status

@@ -1,6 +1,5 @@
-using PgrStudentManagement.Web.Models;
-using PgrStudentManagement.Web.Services;
-namespace PgrStudentManagement.Web.Data;
+using PgrStudentManagement.Web.Modules.Students.Models;
+namespace PgrStudentManagement.Web.Modules.Students.Data;
 
 public class StudentStorage
 {

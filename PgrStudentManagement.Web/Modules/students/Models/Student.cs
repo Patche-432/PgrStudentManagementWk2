@@ -1,4 +1,4 @@
-namespace PgrStudentManagement.Web.Models;
+namespace PgrStudentManagement.Web.Modules.Students.Models;
 
 public class Student
 {

@@ -1,5 +1,7 @@
-using PgrStudentManagement.Web.Data;
-using PgrStudentManagement.Web.Services;
+using PgrStudentManagement.Web;
+using PgrStudentManagement.Web.Models;
+using PgrStudentManagement.Web.Modules.Students.Data;
+using PgrStudentManagement.Web.Modules.Students.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
