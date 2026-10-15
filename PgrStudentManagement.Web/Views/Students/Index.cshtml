@@ -90,6 +90,20 @@
                                            title="Record Thesis Submission (W2-UC05)">
                                             Record Submission
                                         </a>
+                                        <a asp-controller="AcademicSupervisors"
+                                           asp-action="SupervisoryTeam"
+                                           asp-route-studentNumber="@student.StudentNumber"
+                                           class="btn btn-outline-dark"
+                                           title="View Supervisory Team (W4-UC05)">
+                                            Supervisors
+                                        </a>
+                                        <a asp-controller="AcademicSupervisors"
+                                           asp-action="Assign"
+                                           asp-route-studentNumber="@student.StudentNumber"
+                                           class="btn btn-outline-primary"
+                                           title="Assign Academic Supervisor (W4-UC04)">
+                                            Assign
+                                        </a>
                                     </div>
                                 </td>
                             </tr>

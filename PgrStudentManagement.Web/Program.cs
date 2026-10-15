@@ -1,5 +1,8 @@
 using PgrStudentManagement.Web;
 using PgrStudentManagement.Web.Models;
+using PgrStudentManagement.Web.Modules.AcademicSupervisors.Data;
+using PgrStudentManagement.Web.Modules.AcademicSupervisors.Services;
+using PgrStudentManagement.Web.Modules.Students.Contracts;
 using PgrStudentManagement.Web.Modules.Students.Data;
 using PgrStudentManagement.Web.Modules.Students.Services;
 
@@ -9,6 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<StudentStorage>();
 builder.Services.AddScoped<StudentService>();
+builder.Services.AddSingleton<AcademicSupervisorStorage>();
+builder.Services.AddScoped<AcademicSupervisorService>();
+builder.Services.AddScoped<IStudentLookup>(provider =>provider.GetRequiredService<StudentService>());
 
 var app = builder.Build();
 

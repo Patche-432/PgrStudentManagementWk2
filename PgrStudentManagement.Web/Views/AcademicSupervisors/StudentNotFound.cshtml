@@ -1,0 +1,12 @@
+@{
+    ViewData["Title"] = "Student not found";
+}
+
+<div class="container mt-4">
+    <div class="alert alert-warning" role="alert">
+        <h1 class="h4">Student not found</h1>
+        <p class="mb-0">No student matches the student number "@ViewBag.StudentNumber".</p>
+    </div>
+
+    <a asp-controller="Students" asp-action="Index" class="btn btn-outline-secondary">Back to students</a>
+</div>

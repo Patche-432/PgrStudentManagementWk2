@@ -1,0 +1,15 @@
+@{
+    ViewData["Title"] = "Academic Supervisor Not Found";
+}
+
+<div class="container mt-4">
+    <div class="alert alert-warning" role="alert">
+        <h1 class="h4 mb-2">Academic Supervisor not found</h1>
+        @if (!string.IsNullOrWhiteSpace(ViewBag.StaffNumber as string))
+        {
+            <p class="mb-0">No Academic Supervisor matches staff number <strong>@ViewBag.StaffNumber</strong>.</p>
+        }
+    </div>
+
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to Academic Supervisors</a>
+</div>

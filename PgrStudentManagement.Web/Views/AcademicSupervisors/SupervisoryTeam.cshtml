@@ -1,0 +1,98 @@
+@model SupervisoryTeamViewModel
+
+@{
+    ViewData["Title"] = "Supervisory Team";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h1 class="h2 mb-1">Supervisory Team</h1>
+            <p class="text-muted mb-0">@Model.StudentName (@Model.StudentNumber)</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Assign" asp-route-studentNumber="@Model.StudentNumber" class="btn btn-primary btn-sm">Assign Academic Supervisor</a>
+            <a asp-controller="Students" asp-action="Index" class="btn btn-outline-secondary btn-sm">Back to students</a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Success!</strong> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!Model.Entries.Any())
+    {
+        <div class="alert alert-info" role="alert">
+            No supervisory assignments found
+        </div>
+    }
+    else
+    {
+        @if (Model.Assessment.IsComplete)
+        {
+            <div class="alert alert-success" role="alert">
+                The supervisory team is complete.
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning" role="alert">
+                <strong>The supervisory team is incomplete.</strong>
+                <ul class="mb-0">
+                    @foreach (var issue in Model.Assessment.Issues)
+                    {
+                        <li>@issue</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Supervisor</th>
+                                <th>Role</th>
+                                <th>Start date</th>
+                                <th>End date</th>
+                                <th>State</th>
+                                <th>Exception</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var entry in Model.Entries)
+                            {
+                                <tr>
+                                    <td class="ps-3">
+                                        <a asp-action="Details" asp-route-staffNumber="@entry.Assignment.StaffNumber">@entry.SupervisorName</a>
+                                        <span class="text-muted">(@entry.Assignment.StaffNumber)</span>
+                                    </td>
+                                    <td>@entry.Assignment.Role</td>
+                                    <td>@entry.Assignment.StartDate.ToString("dd MMM yyyy")</td>
+                                    <td>@(entry.Assignment.EndDate?.ToString("dd MMM yyyy") ?? "N/A")</td>
+                                    <td>
+                                        @if (entry.Assignment.IsCurrent)
+                                        {
+                                            <span class="badge bg-success">Current</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Historical</span>
+                                        }
+                                    </td>
+                                    <td>@(entry.Assignment.ExceptionAuthorised ? "Authorised" : "N/A")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>

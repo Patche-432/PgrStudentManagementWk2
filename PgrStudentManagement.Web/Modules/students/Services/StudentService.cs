@@ -1,9 +1,10 @@
 using PgrStudentManagement.Web.Modules.Students.Data;
 using PgrStudentManagement.Web.Modules.Students.Models;
+using PgrStudentManagement.Web.Modules.Students.Contracts;  
 
 namespace PgrStudentManagement.Web.Modules.Students.Services;
 
-public class StudentService
+public class StudentService : IStudentLookup 
 {
     private readonly StudentStorage _studentStorage;
 
@@ -30,31 +31,6 @@ public class StudentService
             student.Status = status;
         } 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -89,28 +65,6 @@ public class StudentService
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public void UpdateExpectedSubmissionDate(string studentNumber,DateTime? expectedSubmissionDate)
     {
         var student = _studentStorage.GetStudent(studentNumber);
@@ -128,4 +82,14 @@ public class StudentService
             student.ActualSubmissionDate = actualSubmissionDate;
         }
     }
+
+    public StudentSummary? GetStudentSummary(string studentNumber)
+    {
+        var student = _studentStorage.GetStudent(studentNumber);
+        if (student is null)
+        {
+            return null;
+        }
+        return new StudentSummary(student.StudentNumber, student.FullName);
+}
 }

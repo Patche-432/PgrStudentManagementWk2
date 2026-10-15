@@ -1,0 +1,70 @@
+@model AcademicSupervisor
+
+@{
+    ViewData["Title"] = "Academic Supervisor Details";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h1 class="h2 mb-1">Academic Supervisor Details</h1>
+            <p class="text-muted mb-0">@Model.FullName (@Model.StaffNumber)</p>
+        </div>
+        <div>
+            <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Back to list</a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Success!</strong> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Staff Number</dt>
+                <dd class="col-sm-8">@Model.StaffNumber</dd>
+
+                <dt class="col-sm-4">Full Name</dt>
+                <dd class="col-sm-8">@Model.FullName</dd>
+
+                <dt class="col-sm-4">Email Address</dt>
+                <dd class="col-sm-8">@(Model.EmailAddress ?? "N/A")</dd>
+
+                <dt class="col-sm-4">Employment Type</dt>
+                <dd class="col-sm-8">@Model.EmploymentType</dd>
+
+                <dt class="col-sm-4">Training Completed</dt>
+                <dd class="col-sm-8">
+                    @if (Model.TrainingCompleted)
+                    {
+                        <span class="badge bg-success">Yes</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">No</span>
+                    }
+                </dd>
+
+                <dt class="col-sm-4">Eligible Roles</dt>
+                <dd class="col-sm-8">
+                    @if (Model.EligibleRoles.Any())
+                    {
+                        foreach (var role in Model.EligibleRoles)
+                        {
+                            <span class="badge bg-primary me-1">@role</span>
+                        }
+                    }
+                    else
+                    {
+                        <span class="text-muted">None</span>
+                    }
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>

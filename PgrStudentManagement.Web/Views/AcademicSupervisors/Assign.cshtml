@@ -1,0 +1,112 @@
+@model AssignSupervisorViewModel
+
+@{
+    ViewData["Title"] = "Assign Academic Supervisor";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h1 class="h2 mb-1">Assign Academic Supervisor</h1>
+            <p class="text-muted mb-0">@Model.StudentName (@Model.StudentNumber)</p>
+        </div>
+        <div>
+            <a asp-action="SupervisoryTeam" asp-route-studentNumber="@Model.StudentNumber" class="btn btn-outline-secondary btn-sm">View supervisory team</a>
+        </div>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" role="alert">
+            <div asp-validation-summary="All" class="text-danger mb-0"></div>
+        </div>
+    }
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white fw-bold">Current supervisory team</div>
+        <div class="card-body p-0">
+            @if (!Model.Team.Any())
+            {
+                <p class="text-muted m-3">No current supervisors.</p>
+            }
+            else
+            {
+                <table class="table mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Supervisor</th>
+                            <th>Role</th>
+                            <th>Start date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var entry in Model.Team)
+                        {
+                            <tr>
+                                <td class="ps-3">@entry.SupervisorName (@entry.Assignment.StaffNumber)</td>
+                                <td>@entry.Assignment.Role</td>
+                                <td>@entry.Assignment.StartDate.ToString("dd MMM yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form asp-action="Assign" method="post">
+                <input type="hidden" asp-for="StudentNumber" />
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="StaffNumber" class="form-label fw-bold">Academic Supervisor *</label>
+                        <select asp-for="StaffNumber" class="form-select">
+                            <option value="">Select an Academic Supervisor</option>
+                            @foreach (var supervisor in Model.Supervisors)
+                            {
+                                <option value="@supervisor.StaffNumber">@($"{supervisor.FullName} ({supervisor.StaffNumber}) - {supervisor.EmploymentType}")</option>
+                            }
+                        </select>
+                        <span asp-validation-for="StaffNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Role" class="form-label fw-bold">Supervisory Role *</label>
+                        <select asp-for="Role"
+                                asp-items="Html.GetEnumSelectList<SupervisoryRole>()"
+                                class="form-select">
+                            <option value="">Select a role</option>
+                        </select>
+                        <span asp-validation-for="Role" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="StartDate" class="form-label fw-bold">Start Date *</label>
+                        <input asp-for="StartDate" type="date" class="form-control" />
+                        <span asp-validation-for="StartDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3 d-flex align-items-end">
+                        <div class="form-check">
+                            <input asp-for="ExceptionAuthorised" class="form-check-input" />
+                            <label asp-for="ExceptionAuthorised" class="form-check-label">Fourth supervisor exception authorised</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Assign Supervisor</button>
+                    <a asp-controller="Students" asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
