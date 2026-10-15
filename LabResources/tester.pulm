@@ -1,0 +1,223 @@
+@startuml Week4_ClassDiagram
+title Week 4 - Students and Academic Supervisors (modular monolith)
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide empty members
+
+package "Students Module" {
+
+    package "Contracts (public)" {
+        interface IStudentLookup <<interface>> {
+            +GetStudentSummary(studentNumber : string) : StudentSummary?
+        }
+
+        class StudentSummary <<record>> {
+            +StudentNumber : string
+            +DisplayName : string
+        }
+    }
+
+    package "Internal" {
+        class StudentService {
+            +GetStudents() : IReadOnlyList<Student>
+            +GetStudent(studentNumber : string) : Student?
+            +CreateStudent(...) : Student?
+            +UpdateStatus(...)
+            +UpdateExpectedSubmissionDate(...)
+            +RecordSubmission(...)
+            +GetStudentSummary(studentNumber : string) : StudentSummary?
+        }
+
+        class StudentStorage {
+            -_students : List<Student>
+            +GetStudents() : IReadOnlyList<Student>
+            +GetStudent(studentNumber : string) : Student?
+            +CreateStudent(student : Student)
+        }
+
+        class Student {
+            +StudentNumber : string
+            +FirstName : string
+            +LastName : string
+            +/FullName : string
+            +Course : string?
+            +ModeOfStudy : string?
+            +StartDate : DateTime?
+            +Status : Status
+            +ThesisTitle : string?
+            +ExpectedSubmissionDate : DateTime?
+            +OriginalExpectedSubmissionDate : DateTime?
+            +ActualSubmissionDate : DateTime?
+        }
+
+        enum Status {
+            Researching
+            WritingUp
+            Submitted
+            Corrections
+            Completed
+            Continuation
+            Suspended
+            Withdrawn
+        }
+    }
+}
+
+package "Academic Supervisors Module" {
+
+    class AcademicSupervisorsController {
+        +Index()
+        +Details(staffNumber : string?)
+        +Create() <<GET>>
+        +Create(supervisor : AcademicSupervisor) <<POST>>
+        +Assign(studentNumber : string?) <<GET>>
+        +Assign(model : AssignSupervisorViewModel) <<POST>>
+        +SupervisoryTeam(studentNumber : string?)
+        -PopulateAssignModel(...)
+        -DescribeOutcome(outcome : AssignmentOutcome) : string
+    }
+
+    class AcademicSupervisorService {
+        +GetStudentSummary(studentNumber : string) : StudentSummary?
+        +GetAcademicSupervisors() : IReadOnlyList<AcademicSupervisor>
+        +GetAcademicSupervisor(staffNumber : string) : AcademicSupervisor?
+        +StaffNumberExists(staffNumber : string) : bool
+        +CreateAcademicSupervisor(input : AcademicSupervisor) : AcademicSupervisor?
+        +AssignSupervisor(studentNumber, staffNumber, role, startDate, exceptionAuthorised) : AssignmentOutcome
+        +GetSupervisoryTeam(studentNumber : string) : IReadOnlyList<SupervisoryTeamEntry>
+        +EvaluateSupervisoryTeam(studentNumber : string) : SupervisoryTeamAssessment
+    }
+
+    class AcademicSupervisorStorage {
+        -_academicSupervisors : List<AcademicSupervisor>
+        -_supervisoryAssignments : List<SupervisoryAssignment>
+        +GetAcademicSupervisors() : IReadOnlyList<AcademicSupervisor>
+        +GetAcademicSupervisor(staffNumber : string) : AcademicSupervisor?
+        +AddAcademicSupervisor(supervisor)
+        +GetAssignmentsForStudent(studentNumber : string)
+        +GetAssignmentsForSupervisor(staffNumber : string)
+        +AddSupervisoryAssignment(assignment)
+        +UpdateSupervisoryAssignment(assignment)
+    }
+
+    class AcademicSupervisor {
+        +StaffNumber : string
+        +FirstName : string
+        +LastName : string
+        +/FullName : string
+        +EmailAddress : string?
+        +EmploymentType : SupervisorEmploymentType?
+        +TrainingCompleted : bool
+        +/EligibleRoles : IReadOnlyList<SupervisoryRole>
+        +IsEligibleFor(role : SupervisoryRole) : bool
+    }
+
+    class SupervisoryAssignment {
+        +StudentNumber : string
+        +StaffNumber : string
+        +Role : SupervisoryRole
+        +StartDate : DateTime
+        +EndDate : DateTime?
+        +/IsCurrent : bool
+        +ExceptionAuthorised : bool
+    }
+
+    enum SupervisoryRole {
+        DirectorOfStudies
+        FirstSupervisor
+        SecondSupervisor
+        Adviser
+    }
+
+    enum SupervisorEmploymentType {
+        InstitutionEmployed
+        External
+    }
+
+    enum AssignmentOutcome {
+        Created
+        StudentNotFound
+        SupervisorNotFound
+        DuplicateAssignment
+        RoleAlreadyFilled
+        SupervisorNotEligible
+        EmploymentTypeNotPermitted
+        ExceptionRequired
+    }
+
+    class SupervisoryTeamAssessment <<record>> {
+        +IsComplete : bool
+        +Issues : IReadOnlyList<string>
+    }
+
+    class SupervisoryTeamEntry <<record>> {
+        +Assignment : SupervisoryAssignment
+        +SupervisorName : string
+    }
+
+    class AssignSupervisorViewModel {
+        +StudentNumber : string
+        +StudentName : string
+        +StaffNumber : string?
+        +Role : SupervisoryRole?
+        +StartDate : DateTime?
+        +ExceptionAuthorised : bool
+        +Supervisors : IReadOnlyList<AcademicSupervisor>
+        +Team : IReadOnlyList<SupervisoryTeamEntry>
+    }
+
+    class SupervisoryTeamViewModel {
+        +StudentNumber : string
+        +StudentName : string
+        +Entries : IReadOnlyList<SupervisoryTeamEntry>
+        +Assessment : SupervisoryTeamAssessment
+    }
+}
+
+' --- Students module internals ---
+StudentService ..|> IStudentLookup : implements
+StudentService --> StudentStorage : uses
+StudentStorage "1" o-- "0..*" Student
+Student ..> Status
+IStudentLookup ..> StudentSummary : returns
+StudentService ..> StudentSummary : creates
+
+' --- Supervisors module ---
+AcademicSupervisorsController --> AcademicSupervisorService : uses
+AcademicSupervisorService --> AcademicSupervisorStorage : uses
+AcademicSupervisorService --> IStudentLookup : depends on (DI)\ncontract only
+AcademicSupervisorStorage "1" o-- "0..*" AcademicSupervisor
+AcademicSupervisorStorage "1" o-- "0..*" SupervisoryAssignment
+
+AcademicSupervisor ..> SupervisorEmploymentType
+AcademicSupervisor ..> SupervisoryRole : eligible for
+SupervisoryAssignment ..> SupervisoryRole
+SupervisoryAssignment "0..*" ..> "1" AcademicSupervisor : StaffNumber
+SupervisoryAssignment "0..*" ..> "1" Student : StudentNumber only\n(no Student object stored)
+
+AcademicSupervisorService ..> AssignmentOutcome : returns
+AcademicSupervisorService ..> SupervisoryTeamAssessment : returns
+AcademicSupervisorService ..> SupervisoryTeamEntry : returns
+SupervisoryTeamEntry --> SupervisoryAssignment
+AssignSupervisorViewModel o-- SupervisoryTeamEntry
+AssignSupervisorViewModel o-- AcademicSupervisor
+SupervisoryTeamViewModel o-- SupervisoryTeamEntry
+SupervisoryTeamViewModel --> SupervisoryTeamAssessment
+AcademicSupervisorsController ..> AssignSupervisorViewModel
+AcademicSupervisorsController ..> SupervisoryTeamViewModel
+
+note bottom of AcademicSupervisorService
+The Supervisors module reaches the Students module
+only through IStudentLookup and StudentSummary.
+It never uses Student or StudentStorage.
+end note
+
+note bottom of AcademicSupervisor
+EligibleRoles is derived:
+- InstitutionEmployed + training: DirectorOfStudies, FirstSupervisor
+- Training completed: SecondSupervisor
+- Everyone: Adviser
+end note
+
+@enduml

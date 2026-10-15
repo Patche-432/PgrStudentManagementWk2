@@ -1,0 +1,44 @@
+@startuml W4_UC04_Assign_Sequence
+title W4-UC04 Assign Academic Supervisor to Student
+
+skinparam shadowing false
+actor PgRT
+participant "Assign view" as View
+participant AcademicSupervisorsController as Ctrl
+participant AcademicSupervisorService as Svc
+participant IStudentLookup as Lookup
+participant AcademicSupervisorStorage as Store
+
+PgRT -> View : select student, supervisor,\nrole, start date
+View -> Ctrl : POST Assign(model)
+Ctrl -> Svc : GetStudentSummary(studentNumber)
+Svc -> Lookup : GetStudentSummary(studentNumber)
+Lookup --> Svc : StudentSummary / null
+Svc --> Ctrl : StudentSummary / null
+
+alt student not found
+    Ctrl --> View : StudentNotFound view
+else student found
+    Ctrl -> Svc : AssignSupervisor(student, staff, role, startDate, exception)
+    Svc -> Lookup : GetStudentSummary(studentNumber)
+    Lookup --> Svc : StudentSummary
+    Svc -> Store : GetAcademicSupervisor(staffNumber)
+    Store --> Svc : AcademicSupervisor / null
+    Svc -> Store : GetAssignmentsForStudent(studentNumber)
+    Store --> Svc : assignments (filter to current)
+
+    Svc -> Svc : check duplicate, employment type,\neligibility, unique role,\nfourth-supervisor exception
+
+    alt a rule fails
+        Svc --> Ctrl : AssignmentOutcome (failure)
+        Ctrl --> View : redisplay form with message
+    else all rules pass
+        Svc -> Store : AddSupervisoryAssignment(assignment)
+        Svc --> Ctrl : AssignmentOutcome.Created
+        Ctrl -> Svc : GetSupervisoryTeam / EvaluateSupervisoryTeam
+        Ctrl --> View : redirect to SupervisoryTeam view
+        View --> PgRT : updated team (complete or incomplete)
+    end
+end
+
+@enduml
