@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using PgrStudentManagement.Web.Modules.AcademicSupervisors.Data;
 using PgrStudentManagement.Web.Modules.AcademicSupervisors.Services;
+using PgrStudentManagement.Web.Modules.ResearchActivities.Data;
 using PgrStudentManagement.Web.Modules.Students.Contracts;
 using PgrStudentManagement.Web.Modules.Students.Data;
-using PgrStudentManagement.Web.Modules.Students.Services;
 using PgrStudentManagement.Web.Modules.Students.Data.Daos;
+using PgrStudentManagement.Web.Modules.Students.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,8 @@ builder.Services.AddScoped<AcademicSupervisorService>();
 builder.Services.AddScoped<IStudentLookup>(provider =>provider.GetRequiredService<StudentService>());
 builder.Services.AddDbContext<StudentManagementDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("StudentManagementDatabase")));
 builder.Services.AddScoped<EnrolmentDao>();
+builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(builder.Configuration["ResearchActivityDatabase:ConnectionString"]));
+builder.Services.AddScoped<ResearchActivityRepository>();
 
 
 var app = builder.Build();
