@@ -1,21 +1,32 @@
 using PgrStudentManagement.Web.Modules.Students.Data;
 using PgrStudentManagement.Web.Modules.Students.Models;
 using PgrStudentManagement.Web.Modules.Students.Contracts;  
+using PgrStudentManagement.Web.Modules.Students.Data.Daos;
 
 namespace PgrStudentManagement.Web.Modules.Students.Services;
 
 public class StudentService : IStudentLookup 
 {
     private readonly StudentStorage _studentStorage;
+    private readonly EnrolmentDao _enrolmentDao;
 
-    public StudentService(StudentStorage studentStorage)
+    public StudentService(StudentStorage studentStorage, EnrolmentDao enrolmentDao)
     {
-    _studentStorage = studentStorage;
+        _studentStorage = studentStorage;
+        _enrolmentDao = enrolmentDao;
+    
     }
 
     public IReadOnlyList<Student> GetStudents()
     {
         return _studentStorage.GetStudents();
+    }
+
+    public Task<IReadOnlyList<Enrolment>>
+    GetEnrolmentsForStudentAsync(string studentNumber)
+    {
+        return _enrolmentDao
+        .GetEnrolmentsForStudentAsync(studentNumber);
     }
 
     public Student? GetStudent(string studentNumber)
@@ -35,11 +46,14 @@ public class StudentService : IStudentLookup
 
 
 
-    public Student? CreateStudent(string studentNumber, string firstName, string lastName, Status status = Status.Researching,
+    public Student? CreateStudent(string studentNumber, string firstName, string lastName,
+    string programmeCode,
+    Status status = Status.Researching,
     string? course = null, 
     string? modeOfStudy = null,
     DateTime? startDate = null,
-    string? thesisTitle = null)
+    string? thesisTitle = null,
+    string emailAddress = "")
     {
         if (string.IsNullOrWhiteSpace(studentNumber) ||
             _studentStorage.GetStudent(studentNumber) is not null)
@@ -52,11 +66,16 @@ public class StudentService : IStudentLookup
             StudentNumber = studentNumber,
             FirstName = firstName,
             LastName = lastName,
-            Status = status,
-            Course = course,
-            ModeOfStudy = modeOfStudy,
-            StartDate = startDate,
-            ThesisTitle = thesisTitle
+            EmailAddress = emailAddress
+        };
+
+        var entrolment = new Enrolment
+        {
+            StudentNumber = studentNumber,
+            ProgrammeCode = programmeCode,
+            ModeOfStudy = modeOfStudy ?? string .Empty,
+            StartDate = DateTime.Now,
+            Status = EnrolmentStatus.Active
         };
 
         _studentStorage.CreateStudent(student);

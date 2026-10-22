@@ -1,4 +1,4 @@
-@model PgrStudentManagement.Web.Modules.Students.Models.Student;
+@model PgrStudentManagement.Web.Modules.Students.Models.Student
 
 @{
     ViewData["Title"] = "Create Student";
@@ -54,6 +54,13 @@
                         <label asp-for="LastName" class="form-label fw-bold">Last Name</label>
                         <input asp-for="LastName" class="form-control" />
                         <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+
+                    <!-- Email Address -->
+                    <div class="mb-3">
+                        <label asp-for="EmailAddress" class="form-label fw-bold">Email Address</label>
+                        <input asp-for="EmailAddress" class="form-control" />
+                        <span asp-validation-for="EmailAddress" class="text-danger"></span>
                     </div>
                 </div>
 

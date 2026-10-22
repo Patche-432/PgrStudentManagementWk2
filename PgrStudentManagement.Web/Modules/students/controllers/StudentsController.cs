@@ -8,6 +8,24 @@ public class StudentsController : Controller
 {
     private readonly StudentService _studentService;
 
+
+    public async Task<IActionResult> Enrolments(
+    string studentNumber)
+    {
+        var enrolments = await _studentService
+        .GetEnrolmentsForStudentAsync(studentNumber);
+        ViewData["StudentNumber"] = studentNumber;
+        if (enrolments.Count == 0)
+        {
+            ViewData["Message"] = "No enrolments found";
+        }
+        return View(enrolments);
+    }
+
+
+
+
+
     public StudentsController(StudentService studentService)
     {
         _studentService = studentService;
@@ -106,7 +124,7 @@ public class StudentsController : Controller
 // W? -UC? create student post
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult CreateStudent(Student student)
+    public IActionResult CreateStudent(Student student, string programmeCode)
     {
         if (!ModelState.IsValid)
         {
@@ -116,11 +134,14 @@ public class StudentsController : Controller
         student.StudentNumber,
         student.FirstName,
         student.LastName,
+        programmeCode,
         student.Status,
         student.Course,
         student.ModeOfStudy,
         student.StartDate,
-        student.ThesisTitle);
+        student.ThesisTitle,
+        student.EmailAddress
+        );
 
         if (createdStudent is null)
         {
